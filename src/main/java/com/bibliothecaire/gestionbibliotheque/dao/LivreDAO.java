@@ -90,4 +90,54 @@ public class LivreDAO implements LivreRepository {
             return false;
         }
     }
+
+    @Override
+    public boolean decrementNbExemplaireDisponible(String referenceLivre) {
+        String sql = "UPDATE livre SET nb_exemplaire_disponible = nb_exemplaire_disponible - 1 " +
+                "WHERE reference_livre = ? AND nb_exemplaire_disponible > 0";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, referenceLivre);
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("✅ Nombre d'exemplaires disponibles décrémenté pour: " + referenceLivre);
+                return true;
+            } else {
+                System.err.println("❌ Aucun exemplaire disponible pour: " + referenceLivre);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la décrémentation pour: " + referenceLivre);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean incrementNbExemplaireDisponible(String referenceLivre) {
+        String sql = "UPDATE livre SET nb_exemplaire_disponible = nb_exemplaire_disponible + 1 " +
+                "WHERE reference_livre = ? AND nb_exemplaire_disponible < nb_exemplaire";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, referenceLivre);
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("✅ Nombre d'exemplaires disponibles incrémenté pour: " + referenceLivre);
+                return true;
+            } else {
+                System.err.println("⚠️ Impossible d'incrémenter (limite atteinte) pour: " + referenceLivre);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de l'incrémentation pour: " + referenceLivre);
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

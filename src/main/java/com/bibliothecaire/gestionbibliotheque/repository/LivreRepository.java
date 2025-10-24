@@ -8,4 +8,6 @@ public interface LivreRepository {
     boolean save(Livre livre);
     Livre findByReferenceLivre(String referenceLivre);
     List<Livre> findAll();
+    boolean decrementNbExemplaireDisponible(String referenceLivre);
+    boolean incrementNbExemplaireDisponible(String referenceLivre);
 }
