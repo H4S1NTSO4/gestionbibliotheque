@@ -17,7 +17,7 @@
                     <FontIcon fx:id="toggleIcon" iconLiteral="fas-bars" styleClass="header-icon"/>
                 </graphic>
             </Button>
-            <Label text="(Icone Bibliotheque)" styleClass="header-title"/>
+            <Label text="Biblio Management" styleClass="header-title"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
@@ -51,8 +51,12 @@
                     <!-- Dashboard -->
                     <Button fx:id="btnDashboard" onAction="#showDashboard" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Visiteurs -->
-                    <Button fx:id="btnVisiteurs" onAction="#showVisiteurs" styleClass="menu-item" maxWidth="Infinity"/>
+                    <!-- Visiteurs avec sous-menu -->
+                    <Button fx:id="btnVisiteurs" onAction="#toggleVisiteursSubmenu" styleClass="menu-item" maxWidth="Infinity"/>
+                    <VBox fx:id="visiteursSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
+                        <Button fx:id="btnVisiteEnCours" onAction="#showVisiteEnCours" styleClass="menu-item-sub" maxWidth="Infinity"/>
+                        <Button fx:id="btnHistoriqueVisite" onAction="#showHistoriqueVisite" styleClass="menu-item-sub" maxWidth="Infinity"/>
+                    </VBox>
 
                     <!-- Membres -->
                     <Button fx:id="btnMembres" onAction="#showMembres" styleClass="menu-item" maxWidth="Infinity"/>
@@ -60,11 +64,15 @@
                     <!-- Livres -->
                     <Button fx:id="btnLivres" onAction="#showLivres" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Ventes -->
-                    <Button fx:id="btnVentes" onAction="#showVentes" styleClass="menu-item" maxWidth="Infinity"/>
+                    <!-- Consultation Livre avec sous-menu -->
+                    <Button fx:id="btnConsultationLivre" onAction="#toggleConsultationSubmenu" styleClass="menu-item" maxWidth="Infinity"/>
+                    <VBox fx:id="consultationSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
+                        <Button fx:id="btnConsultationEnCours" onAction="#showConsultationEnCours" styleClass="menu-item-sub" maxWidth="Infinity"/>
+                        <Button fx:id="btnHistoriqueConsultation" onAction="#showHistoriqueConsultation" styleClass="menu-item-sub" maxWidth="Infinity"/>
+                    </VBox>
 
-                    <!-- Emprunts -->
-                    <Button fx:id="btnEmprunts" onAction="#showEmprunts" styleClass="menu-item" maxWidth="Infinity"/>
+                    <!-- Mémoire -->
+                    <Button fx:id="btnMemoire" onAction="#showMemoire" styleClass="menu-item" maxWidth="Infinity"/>
 
                     <!-- Rapports -->
                     <Button fx:id="btnRapports" onAction="#showRapports" styleClass="menu-item" maxWidth="Infinity"/>

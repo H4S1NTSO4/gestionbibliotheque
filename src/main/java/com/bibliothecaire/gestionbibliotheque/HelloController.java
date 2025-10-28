@@ -35,9 +35,18 @@ public class HelloController {
     private VBox menuContainer;
 
     @FXML
-    private Button btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnVentes, btnEmprunts, btnRapports, btnParametres, btnDeconnexion;
+    private Button btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnConsultationLivre,
+            btnMemoire, btnRapports, btnParametres, btnDeconnexion;
+
+    @FXML
+    private Button btnVisiteEnCours, btnHistoriqueVisite, btnConsultationEnCours, btnHistoriqueConsultation;
+
+    @FXML
+    private VBox visiteursSubmenu, consultationSubmenu;
 
     private boolean menuExpanded = true;
+    private boolean visiteursSubmenuOpen = false;
+    private boolean consultationSubmenuOpen = false;
 
     private Map<Button, HBox> fullGraphics = new HashMap<>();
     private Map<Button, FontIcon> iconOnlyGraphics = new HashMap<>();
@@ -45,82 +54,100 @@ public class HelloController {
 
     @FXML
     public void initialize() {
-        System.out.println("Initialisation du contrôleur...");
-
-        // Vérifier que tous les boutons sont bien injectés
-        if (btnDashboard == null) System.out.println("btnDashboard est null !");
-        if (btnVisiteurs == null) System.out.println("btnVisiteurs est null !");
-        if (btnMembres == null) System.out.println("btnMembres est null !");
-        if (btnLivres == null) System.out.println("btnLivres est null !");
-        if (btnVentes == null) System.out.println("btnVentes est null !");
-        if (btnEmprunts == null) System.out.println("btnEmprunts est null !");
-        if (btnRapports == null) System.out.println("btnRapports est null !");
-        if (btnParametres == null) System.out.println("btnParametres est null !");
-        if (btnDeconnexion == null) System.out.println("btnDeconnexion est null !");
-
-        // Configuration des boutons du menu
+        // Menus principaux
         setupMenuButton(btnDashboard, "fas-th-large", "Tableau de bord");
-        setupMenuButton(btnVisiteurs, "fas-eye", "Visiteurs");
+        setupMenuButtonWithArrow(btnVisiteurs, "fas-eye", "Visiteurs");
         setupMenuButton(btnMembres, "fas-users", "Membres");
         setupMenuButton(btnLivres, "fas-book", "Livres");
-        setupMenuButton(btnVentes, "fas-shopping-cart", "Ventes");
-        setupMenuButton(btnEmprunts, "fas-exchange-alt", "Emprunts");
+        setupMenuButtonWithArrow(btnConsultationLivre, "fas-book-reader", "Consultation Livre");
+        setupMenuButton(btnMemoire, "fas-graduation-cap", "Mémoire");
         setupMenuButton(btnRapports, "fas-chart-line", "Rapports");
         setupMenuButton(btnParametres, "fas-cog", "Paramètres");
         setupMenuButton(btnDeconnexion, "fas-sign-out-alt", "Déconnexion");
 
-        // Stocker les graphiques
+        // Sous-menus
+        setupSubMenuButton(btnVisiteEnCours, "Visite en cours");
+        setupSubMenuButton(btnHistoriqueVisite, "Historique visite");
+        setupSubMenuButton(btnConsultationEnCours, "Consultation en cours");
+        setupSubMenuButton(btnHistoriqueConsultation, "Historique consultation");
+
         storeButtonGraphics();
-
-        // Activer Livres par défaut
         setActiveMenu(btnDashboard);
-
-        System.out.println("Initialisation terminée !");
     }
 
     private void setupMenuButton(Button button, String iconLiteral, String title) {
-        if (button == null) {
-            System.out.println("Erreur: bouton null pour " + title);
-            return;
-        }
+        if (button == null) return;
 
-        try {
-            // Créer l'icône
-            FontIcon icon = new FontIcon(iconLiteral);
-            icon.getStyleClass().add("menu-icon");
+        FontIcon icon = new FontIcon(iconLiteral);
+        icon.getStyleClass().add("menu-icon");
 
-            // Créer le label
-            Label label = new Label(title);
-            label.getStyleClass().add("menu-label");
+        Label label = new Label(title);
+        label.getStyleClass().add("menu-label");
 
-            // HBox pour contenir icône + label
-            HBox content = new HBox(15, icon, label);
-            content.setAlignment(Pos.CENTER_LEFT);
+        HBox content = new HBox(15, icon, label);
+        content.setAlignment(Pos.CENTER_LEFT);
 
-            // Définir le graphique
-            button.setGraphic(content);
-            button.setText("");
+        button.setGraphic(content);
+        button.setText("");
 
-            // Ajouter un tooltip
-            Tooltip tooltip = new Tooltip(title);
-            button.setTooltip(tooltip);
+        Tooltip tooltip = new Tooltip(title);
+        button.setTooltip(tooltip);
+    }
 
-            System.out.println("Bouton configuré: " + title);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de la configuration du bouton " + title + ": " + e.getMessage());
-            e.printStackTrace();
-        }
+    private void setupMenuButtonWithArrow(Button button, String iconLiteral, String title) {
+        if (button == null) return;
+
+        FontIcon icon = new FontIcon(iconLiteral);
+        icon.getStyleClass().add("menu-icon");
+
+        Label label = new Label(title);
+        label.getStyleClass().add("menu-label");
+
+        FontIcon arrow = new FontIcon("fas-chevron-down");
+        arrow.getStyleClass().add("menu-arrow");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        HBox content = new HBox(15, icon, label, spacer, arrow);
+        content.setAlignment(Pos.CENTER_LEFT);
+
+        button.setGraphic(content);
+        button.setText("");
+
+        Tooltip tooltip = new Tooltip(title);
+        button.setTooltip(tooltip);
+    }
+
+    private void setupSubMenuButton(Button button, String title) {
+        if (button == null) return;
+
+        FontIcon bullet = new FontIcon("fas-circle");
+        bullet.getStyleClass().add("submenu-bullet");
+
+        Label label = new Label(title);
+        label.getStyleClass().add("menu-label-sub");
+
+        HBox content = new HBox(10, bullet, label);
+        content.setAlignment(Pos.CENTER_LEFT);
+
+        button.setGraphic(content);
+        button.setText("");
+
+        Tooltip tooltip = new Tooltip(title);
+        button.setTooltip(tooltip);
     }
 
     private void storeButtonGraphics() {
-        Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnVentes, btnEmprunts, btnRapports, btnParametres, btnDeconnexion};
+        Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnConsultationLivre,
+                btnMemoire, btnRapports, btnParametres, btnDeconnexion,
+                btnVisiteEnCours, btnHistoriqueVisite, btnConsultationEnCours, btnHistoriqueConsultation};
 
         for (Button btn : buttons) {
             if (btn != null && btn.getGraphic() instanceof HBox) {
                 HBox fullGraphic = (HBox) btn.getGraphic();
                 fullGraphics.put(btn, fullGraphic);
 
-                // Extraire l'icône
                 if (!fullGraphic.getChildren().isEmpty() && fullGraphic.getChildren().get(0) instanceof FontIcon) {
                     FontIcon originalIcon = (FontIcon) fullGraphic.getChildren().get(0);
                     FontIcon iconCopy = new FontIcon(originalIcon.getIconLiteral());
@@ -134,46 +161,46 @@ public class HelloController {
     @FXML
     protected void toggleMenu() {
         if (menuExpanded) {
-            // Réduire le menu à 80px - afficher uniquement les icônes
             sideMenu.setPrefWidth(80);
             sideMenu.setMinWidth(80);
             sideMenu.setMaxWidth(80);
 
-            // Réduire le padding du conteneur
             menuContainer.setStyle("-fx-padding: 20 5; -fx-spacing: 2;");
 
-            // Changer les boutons pour afficher uniquement les icônes
-            Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnVentes, btnEmprunts, btnRapports, btnParametres, btnDeconnexion};
+            // Masquer les sous-menus
+            visiteursSubmenu.setVisible(false);
+            visiteursSubmenu.setManaged(false);
+            consultationSubmenu.setVisible(false);
+            consultationSubmenu.setManaged(false);
+
+            Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnConsultationLivre,
+                    btnMemoire, btnRapports, btnParametres, btnDeconnexion};
             for (Button btn : buttons) {
                 if (btn != null && iconOnlyGraphics.containsKey(btn)) {
                     btn.setGraphic(iconOnlyGraphics.get(btn));
                     btn.setAlignment(Pos.CENTER);
                     btn.setPrefWidth(60);
                     btn.setMaxWidth(60);
-                    // Ajouter une classe CSS spéciale pour le mode icône seule
                     btn.getStyleClass().add("menu-item-icon-only");
                 }
             }
 
             menuExpanded = false;
         } else {
-            // Étendre le menu à 240px - afficher icônes + textes
             sideMenu.setPrefWidth(240);
             sideMenu.setMinWidth(240);
             sideMenu.setMaxWidth(240);
 
-            // Restaurer le padding du conteneur
             menuContainer.setStyle("-fx-padding: 20 10; -fx-spacing: 2;");
 
-            // Restaurer les graphiques complets
-            Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnVentes, btnEmprunts, btnRapports, btnParametres, btnDeconnexion};
+            Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnConsultationLivre,
+                    btnMemoire, btnRapports, btnParametres, btnDeconnexion};
             for (Button btn : buttons) {
                 if (btn != null && fullGraphics.containsKey(btn)) {
                     btn.setGraphic(fullGraphics.get(btn));
                     btn.setAlignment(Pos.CENTER_LEFT);
                     btn.setPrefWidth(Region.USE_COMPUTED_SIZE);
                     btn.setMaxWidth(Double.MAX_VALUE);
-                    // Retirer la classe CSS du mode icône seule
                     btn.getStyleClass().remove("menu-item-icon-only");
                 }
             }
@@ -182,16 +209,56 @@ public class HelloController {
         }
     }
 
+    @FXML
+    protected void toggleVisiteursSubmenu() {
+        if (!menuExpanded) {
+            showVisiteurs();
+            return;
+        }
+
+        visiteursSubmenuOpen = !visiteursSubmenuOpen;
+        visiteursSubmenu.setVisible(visiteursSubmenuOpen);
+        visiteursSubmenu.setManaged(visiteursSubmenuOpen);
+
+        // Changer l'icône de la flèche
+        updateArrowIcon(btnVisiteurs, visiteursSubmenuOpen);
+    }
+
+    @FXML
+    protected void toggleConsultationSubmenu() {
+        if (!menuExpanded) {
+            showConsultationLivre();
+            return;
+        }
+
+        consultationSubmenuOpen = !consultationSubmenuOpen;
+        consultationSubmenu.setVisible(consultationSubmenuOpen);
+        consultationSubmenu.setManaged(consultationSubmenuOpen);
+
+        // Changer l'icône de la flèche
+        updateArrowIcon(btnConsultationLivre, consultationSubmenuOpen);
+    }
+
+    private void updateArrowIcon(Button button, boolean isOpen) {
+        if (button.getGraphic() instanceof HBox) {
+            HBox content = (HBox) button.getGraphic();
+            if (content.getChildren().size() >= 4 && content.getChildren().get(3) instanceof FontIcon) {
+                FontIcon arrow = (FontIcon) content.getChildren().get(3);
+                arrow.setIconLiteral(isOpen ? "fas-chevron-up" : "fas-chevron-down");
+            }
+        }
+    }
+
     private void setActiveMenu(Button activeButton) {
-        // Retirer la classe active de tous les boutons
-        Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnVentes, btnEmprunts, btnRapports, btnParametres, btnDeconnexion};
+        Button[] buttons = {btnDashboard, btnVisiteurs, btnMembres, btnLivres, btnConsultationLivre,
+                btnMemoire, btnRapports, btnParametres, btnDeconnexion,
+                btnVisiteEnCours, btnHistoriqueVisite, btnConsultationEnCours, btnHistoriqueConsultation};
         for (Button btn : buttons) {
             if (btn != null) {
                 btn.getStyleClass().remove("menu-item-active");
             }
         }
 
-        // Ajouter la classe active au bouton sélectionné
         if (activeButton != null) {
             activeButton.getStyleClass().add("menu-item-active");
             currentActiveButton = activeButton;
@@ -211,9 +278,21 @@ public class HelloController {
     }
 
     @FXML
+    protected void showVisiteEnCours() {
+        setActiveMenu(btnVisiteEnCours);
+        updateContentMessage("Visite en cours", "Liste des visites actuellement en cours");
+    }
+
+    @FXML
+    protected void showHistoriqueVisite() {
+        setActiveMenu(btnHistoriqueVisite);
+        updateContentMessage("Historique visite", "Historique complet des visites");
+    }
+
+    @FXML
     protected void showMembres() {
         setActiveMenu(btnMembres);
-        updateContentMessage("Membres", "Gestion des membres inscrits");
+        loadView("etudiant.fxml");
     }
 
     @FXML
@@ -223,15 +302,27 @@ public class HelloController {
     }
 
     @FXML
-    protected void showVentes() {
-        setActiveMenu(btnVentes);
-        updateContentMessage("Ventes", "Gestion des ventes de livres");
+    protected void showConsultationLivre() {
+        setActiveMenu(btnConsultationLivre);
+        updateContentMessage("Consultation Livre", "Gestion des consultations de livres");
     }
 
     @FXML
-    protected void showEmprunts() {
-        setActiveMenu(btnEmprunts);
-        updateContentMessage("Emprunts", "Gestion des emprunts et retours");
+    protected void showConsultationEnCours() {
+        setActiveMenu(btnConsultationEnCours);
+        updateContentMessage("Consultation en cours", "Liste des consultations actuellement en cours");
+    }
+
+    @FXML
+    protected void showHistoriqueConsultation() {
+        setActiveMenu(btnHistoriqueConsultation);
+        updateContentMessage("Historique consultation", "Historique complet des consultations");
+    }
+
+    @FXML
+    protected void showMemoire() {
+        setActiveMenu(btnMemoire);
+        updateContentMessage("Mémoire", "Gestion des mémoires universitaires");
     }
 
     @FXML
@@ -248,22 +339,18 @@ public class HelloController {
 
     @FXML
     protected void deconnexion() {
-        System.out.println("Déconnexion...");
         // Logique de déconnexion à implémenter
     }
 
     private void updateContentMessage(String title, String description) {
-        // Créer une vue temporaire avec le message
         VBox messageView = new VBox(30);
         messageView.setAlignment(Pos.CENTER);
         messageView.setStyle("-fx-padding: 60;");
 
-        // Icône
         FontIcon icon = new FontIcon("fas-info-circle");
         icon.setIconSize(80);
         icon.setIconColor(javafx.scene.paint.Color.web("#6366f1"));
 
-        // Textes
         Label titleLabel = new Label(title);
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;");
 
@@ -275,7 +362,20 @@ public class HelloController {
 
         messageView.getChildren().addAll(icon, textBox);
 
-        // Remplacer le contenu
         contentArea.getChildren().setAll(messageView);
+    }
+
+    private void loadView(String fxmlFile) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/com/bibliothecaire/gestionbibliotheque/view/" + fxmlFile)
+            );
+            javafx.scene.Parent view = loader.load();
+            contentArea.getChildren().setAll(view);
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de la vue: " + fxmlFile);
+            e.printStackTrace();
+            updateContentMessage("Erreur", "Impossible de charger la vue: " + fxmlFile);
+        }
     }
 }

@@ -1,0 +1,93 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Region?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bibliothecaire.gestionbibliotheque.controller.EtudiantController"
+      spacing="0" styleClass="content-area"
+      stylesheets="@../style/etudiant.css">
+
+    <!-- En-tête de la page -->
+    <HBox styleClass="content-header" alignment="CENTER_LEFT">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Membres - Étudiants" styleClass="content-title"/>
+            <Label text="Gérez les étudiants inscrits dans la bibliothèque" styleClass="content-subtitle"/>
+        </VBox>
+
+        <HBox spacing="12">
+            <Button text="IMPORTER" styleClass="btn-secondary" onAction="#handleImport"/>
+            <Button text="AJOUTER" styleClass="btn-primary" onAction="#handleAjouter"/>
+        </HBox>
+    </HBox>
+
+    <!-- Barre de recherche et filtres -->
+    <HBox styleClass="filter-container" spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 20 30;">
+        <VBox spacing="5">
+            <Label text="Rechercher" styleClass="filter-label"/>
+            <TextField fx:id="searchField" promptText="Matricule, nom ou email..."
+                       prefWidth="300" styleClass="text-field" onKeyReleased="#handleSearch"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Actions -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button styleClass="btn-icon" text="" onAction="#handleRefresh">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sync-alt" iconSize="16"/>
+                </graphic>
+            </Button>
+            <Button styleClass="btn-icon" text="" onAction="#handleExport">
+                <graphic>
+                    <FontIcon iconLiteral="fas-download" iconSize="16"/>
+                </graphic>
+            </Button>
+            <Button styleClass="btn-icon" text="" onAction="#handlePrint">
+                <graphic>
+                    <FontIcon iconLiteral="fas-print" iconSize="16"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </HBox>
+
+    <!-- Tableau des étudiants -->
+    <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 0 30 30 30;">
+        <TableView fx:id="etudiantsTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colMatricule" text="Matricule" prefWidth="150"/>
+                <TableColumn fx:id="colNomPrenoms" text="Nom et Prénoms" prefWidth="300"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="250"/>
+                <TableColumn fx:id="colTelephone" text="Téléphone" prefWidth="150"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="120"/>
+            </columns>
+        </TableView>
+
+        <!-- Pagination et info -->
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15 0 0 0;">
+            <Label fx:id="lblTotal" text="Total : 0 étudiant(s)"
+                   style="-fx-text-fill: #6b7280; -fx-font-size: 14px; -fx-font-weight: 600;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblPagination" text="1-10 sur 0"
+                   style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
+            <Button styleClass="btn-icon" text="" onAction="#handlePreviousPage">
+                <graphic>
+                    <FontIcon iconLiteral="fas-chevron-left" iconSize="14"/>
+                </graphic>
+            </Button>
+            <Button styleClass="btn-icon" text="" onAction="#handleNextPage">
+                <graphic>
+                    <FontIcon iconLiteral="fas-chevron-right" iconSize="14"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+
+</VBox>

@@ -90,7 +90,7 @@ public class TestVisiteDAO {
                     System.out.println(v.getVisiteId() + " " + v.getDateVisite() + " " + v.getMatriculeEtudiant() + " " + v.getHeureEntree() + " " + v.getHeureSortie());
                 }
             } else {
-                System.out.println("ECHEC: Liste des visites terminees introuvables");
+                System.err.println("ECHEC: Liste des visites terminees introuvables");
             }
         }
     }
@@ -104,7 +104,7 @@ public class TestVisiteDAO {
             return;
         }
         if (visiteInitiale.getHeureSortie() != null) {
-            System.err.println("ECHEC Precondition: La visite " + visiteId + " est deja cloturee, test non valide" );
+            System.err.println("ECHEC Precondition: La visite " + visiteId + " est deja cloturee, test non valide");
             return;
         }
 
