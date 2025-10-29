@@ -172,14 +172,18 @@
     -fx-text-fill: #4338ca;
 }
 
-/* Colonne Actions - Centrée */
-.table-view  .table-cell {
-    -fx-alignment: CENTER;
+.btn-icon:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
 }
 
-#colActions {
+.btn-icon:disabled:hover {
+    -fx-background-color: transparent;
+}
+
+/* Colonne Actions - Centrée */
+#colActions .table-cell {
     -fx-alignment: CENTER;
-    -fx-border-color: transparent;
 }
 
 /* Suppression de la bordure de focus */

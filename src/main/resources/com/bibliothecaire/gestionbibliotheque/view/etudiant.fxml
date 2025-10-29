@@ -59,12 +59,15 @@
     <!-- Tableau des étudiants -->
     <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 0 30 30 30;">
         <TableView fx:id="etudiantsTable" VBox.vgrow="ALWAYS">
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
             <columns>
-                <TableColumn fx:id="colMatricule" text="Matricule" prefWidth="150"/>
-                <TableColumn fx:id="colNomPrenoms" text="Nom et Prénoms" prefWidth="300"/>
-                <TableColumn fx:id="colEmail" text="Email" prefWidth="250"/>
-                <TableColumn fx:id="colTelephone" text="Téléphone" prefWidth="150"/>
-                <TableColumn fx:id="colActions" text="Actions" prefWidth="120"/>
+                <TableColumn fx:id="colMatricule" text="Matricule" prefWidth="150" minWidth="100"/>
+                <TableColumn fx:id="colNomPrenoms" text="Nom et Prénoms" prefWidth="300" minWidth="200"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="250" minWidth="180"/>
+                <TableColumn fx:id="colTelephone" text="Téléphone" prefWidth="150" minWidth="120"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="120" minWidth="120" maxWidth="150"/>
             </columns>
         </TableView>
 
@@ -77,17 +80,18 @@
 
             <Label fx:id="lblPagination" text="1-10 sur 0"
                    style="-fx-text-fill: #6b7280; -fx-font-size: 14px;"/>
-            <Button styleClass="btn-icon" text="" onAction="#handlePreviousPage">
+            <Button fx:id="btnPrevious" styleClass="btn-icon" text="" onAction="#handlePreviousPage">
                 <graphic>
                     <FontIcon iconLiteral="fas-chevron-left" iconSize="14"/>
                 </graphic>
             </Button>
-            <Button styleClass="btn-icon" text="" onAction="#handleNextPage">
+            <Button fx:id="btnNext" styleClass="btn-icon" text="" onAction="#handleNextPage">
                 <graphic>
                     <FontIcon iconLiteral="fas-chevron-right" iconSize="14"/>
                 </graphic>
             </Button>
         </HBox>
     </VBox>
+
 
 </VBox>

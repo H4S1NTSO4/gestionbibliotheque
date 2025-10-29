@@ -144,7 +144,7 @@
 
 /* Icônes toujours visibles en mode réduit */
 .menu-item-icon-only {
-    -fx-background-color: #f3f4f6;
+    -fx-background-color: transparent;
 }
 
 .menu-item-icon-only .menu-icon {

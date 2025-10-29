@@ -1,0 +1,101 @@
+/* ========== STYLES POUR LES DIALOGS ========== */
+
+.form-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1f2937;
+}
+
+.form-field:focused {
+    -fx-border-color: #6366f1;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.25), 8, 0, 0, 0);
+}
+
+.form-field:hover {
+    -fx-border-color: #9ca3af;
+}
+
+/* Placeholder text */
+.form-field:empty {
+    -fx-prompt-text-fill: #9ca3af;
+}
+
+/* ========== BOUTONS DU DIALOG ========== */
+.btn-primary {
+    -fx-background-color: #6366f1;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #4f46e5;
+    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.4), 10, 0, 0, 4);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #4338ca;
+}
+
+.btn-secondary {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #374151;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 24;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #9ca3af;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #f3f4f6;
+}
+
+/* ========== LABELS ========== */
+.dialog-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #111827;
+}
+
+.field-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #374151;
+}
+
+/* ========== DIALOG PANE ========== */
+.dialog-pane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .content {
+    -fx-padding: 0;
+}
+
+.dialog-pane .button-bar {
+    -fx-padding: 0;
+}
