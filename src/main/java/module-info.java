@@ -15,4 +15,6 @@ module com.bibliothecaire.gestionbibliotheque {
 
     opens com.bibliothecaire.gestionbibliotheque.model to javafx.fxml, javafx.base;
     exports com.bibliothecaire.gestionbibliotheque.model;
+    exports com.bibliothecaire.gestionbibliotheque.util;
+    opens com.bibliothecaire.gestionbibliotheque.util to javafx.base, javafx.fxml;
 }

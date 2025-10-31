@@ -13,8 +13,12 @@ public class LivreDAO implements LivreRepository {
         return DatabaseConfig.getConnection();
     }
 
+    /**
+     * Mappe un ResultSet vers un objet Livre.
+     * Doit être mis à jour pour inclure le nom de la catégorie (colonne 'genre' de la jointure).
+     */
     private Livre mapResultSetToLivre(ResultSet rs) throws SQLException {
-        return new Livre(
+        Livre livre = new Livre(
                 rs.getString("reference_livre"),
                 rs.getString("titre"),
                 rs.getString("auteur"),
@@ -24,10 +28,24 @@ public class LivreDAO implements LivreRepository {
                 rs.getBoolean("est_memoire"),
                 rs.getObject("memoire_id") != null ? rs.getInt("memoire_id") : null
         );
+
+        // AJOUT CRUCIAL : Mappage du nom de la catégorie (colonne 'genre' de la jointure)
+        // Vérifie si la colonne existe dans le ResultSet avant de l'extraire pour ne pas causer d'erreur
+        // dans les autres méthodes (comme findByReferenceLivre) qui n'utilisent pas la jointure.
+        try {
+            String nomCategorie = rs.getString("genre");
+            livre.setNomCategorie(nomCategorie);
+        } catch (SQLException e) {
+            // Cette erreur est ignorée si la colonne 'genre' n'est pas présente (ex: dans findByReferenceLivre)
+            // C'est un compromis pour ne pas avoir deux méthodes mapResultSetToLivre.
+        }
+
+        return livre;
     }
 
     @Override
     public Livre findByReferenceLivre(String referenceLivre) {
+        // Cette méthode peut rester simple car elle n'a pas besoin du nom de la catégorie pour la logique métier
         String sql = "SELECT * FROM livre WHERE  reference_livre = ?";
         Livre livre = null;
 
@@ -50,17 +68,22 @@ public class LivreDAO implements LivreRepository {
     @Override
     public List<Livre> findAll() {
         List<Livre> livres = new ArrayList<>();
-        String sql = "SELECT * FROM livre ORDER BY titre ASC";
+
+        // REQUÊTE MODIFIÉE : Jointure avec 'categorie_livre' pour obtenir le nom ('genre')
+        String sql = "SELECT l.*, c.genre FROM livre l " +
+                "JOIN categorie_livre c ON l.id_categorie = c.id_categorie " +
+                "ORDER BY l.titre ASC";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
+                // mapResultSetToLivre va maintenant récupérer la colonne 'genre' et la définir
                 livres.add(mapResultSetToLivre(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la recuperation de tous les livres.");
+            System.err.println("❌ Erreur lors de la recuperation de tous les livres.");
             e.printStackTrace();
         }
         return livres;
@@ -80,8 +103,13 @@ public class LivreDAO implements LivreRepository {
             stmt.setInt(4, nbExemplairesTotal);
             stmt.setInt(5, nbExemplairesTotal);
             stmt.setInt(6, livre.getIdCategorie());
-            stmt.setBoolean(7, false);
-            stmt.setNull(8, Types.INTEGER);
+            stmt.setBoolean(7, livre.isEstMemoire()); // Utiliser la valeur du modèle
+
+            if (livre.getMemoireId() != null) {
+                stmt.setInt(8, livre.getMemoireId());
+            } else {
+                stmt.setNull(8, Types.INTEGER);
+            }
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {

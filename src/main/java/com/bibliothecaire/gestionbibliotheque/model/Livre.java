@@ -11,6 +11,8 @@ public class Livre {
     private boolean estMemoire;
     private Integer memoireId;
 
+    private String nomCategorie;
+
     // Constructeur mifanaraka @ io classe Etudiant io
     public  Livre(String referenceLivre, String titre, String auteur, int nbExemplaire,  int nbExemplaireDisponible, int idCategorie, boolean estMemoire, Integer memoireId) {
         this.referenceLivre = referenceLivre;
@@ -78,5 +80,12 @@ public class Livre {
     }
     public void setMemoireId(Integer memoireId) {
         this.memoireId = memoireId;
+    }
+
+    public String getNomCategorie() {
+        return nomCategorie;
+    }
+    public void setNomCategorie(String nomCategorie) {
+        this.nomCategorie = nomCategorie;
     }
 }

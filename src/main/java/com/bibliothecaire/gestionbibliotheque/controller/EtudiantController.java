@@ -2,8 +2,11 @@ package com.bibliothecaire.gestionbibliotheque.controller;
 
 import com.bibliothecaire.gestionbibliotheque.dao.EtudiantDAO;
 import com.bibliothecaire.gestionbibliotheque.model.Etudiant;
+import com.bibliothecaire.gestionbibliotheque.repository.EtudiantRepository;
+import com.bibliothecaire.gestionbibliotheque.util.ExcelImporter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -19,40 +22,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EtudiantController {
+
+    // FXML IDs pour la gestion du chargement (StackPane)
+    @FXML
+    private VBox mainContent;
+    @FXML
+    private VBox loadingOverlay;
+
+    // Champs FXML de la TableView
     @FXML
     private TableView<Etudiant> etudiantsTable;
-
     @FXML
     private TableColumn<Etudiant, String> colMatricule;
-
     @FXML
     private TableColumn<Etudiant, String> colNomPrenoms;
-
     @FXML
     private TableColumn<Etudiant, String> colEmail;
-
     @FXML
     private TableColumn<Etudiant, String> colTelephone;
-
     @FXML
     private TableColumn<Etudiant, Void> colActions;
 
+    // Champs FXML de la barre de recherche
     @FXML
-    private TextField searchField;
+    private TextField txtRecherche;
 
+    // Champs FXML de la pagination
     @FXML
-    private Label lblTotal;
-
+    private Label lblTotalEtudiants;
     @FXML
-    private Label lblPagination;
+    private Label lblPaginationInfo;
 
     @FXML
     private Button btnPrevious;
-
     @FXML
     private Button btnNext;
 
-    private EtudiantDAO etudiantDAO;
+    // Données et Repositories
+    private EtudiantRepository etudiantRepository;
     private ObservableList<Etudiant> allEtudiants;
     private ObservableList<Etudiant> filteredEtudiants;
 
@@ -63,92 +70,143 @@ public class EtudiantController {
 
     @FXML
     public void initialize() {
-        etudiantDAO = new EtudiantDAO();
+        etudiantRepository = new EtudiantDAO();
         allEtudiants = FXCollections.observableArrayList();
         filteredEtudiants = FXCollections.observableArrayList();
+
+        if (txtRecherche != null) {
+            txtRecherche.textProperty().addListener((obs, oldVal, newVal) -> handleSearch());
+        }
 
         setupTableColumns();
         loadEtudiants();
     }
 
     private void setupTableColumns() {
-        // Configuration des colonnes
         colMatricule.setCellValueFactory(new PropertyValueFactory<>("matriculeEtudiant"));
         colNomPrenoms.setCellValueFactory(new PropertyValueFactory<>("nomPrenoms"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colTelephone.setCellValueFactory(new PropertyValueFactory<>("telephone"));
 
-        // Style pour les cellules
         colMatricule.setStyle("-fx-font-weight: 600;");
 
-        // Colonne d'actions
+        // Colonne d'actions : Implémentation du bouton 'trois points' avec ContextMenu
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button btnModifier = new Button();
-            private final Button btnSupprimer = new Button();
-            private final HBox actionBox = new HBox(8);
-
-            {
-                // Bouton Modifier
-                btnModifier.getStyleClass().add("btn-icon");
-                FontIcon editIcon = new FontIcon("fas-edit");
-                editIcon.setIconSize(14);
-                btnModifier.setGraphic(editIcon);
-                btnModifier.setTooltip(new Tooltip("Modifier"));
-                btnModifier.setOnAction(e -> {
-                    Etudiant etudiant = getTableView().getItems().get(getIndex());
-                    handleModifier(etudiant);
-                });
-
-                // Bouton Supprimer
-                btnSupprimer.getStyleClass().add("btn-icon");
-                FontIcon deleteIcon = new FontIcon("fas-trash");
-                deleteIcon.setIconSize(14);
-                deleteIcon.setIconColor(javafx.scene.paint.Color.web("#ef4444"));
-                btnSupprimer.setGraphic(deleteIcon);
-                btnSupprimer.setTooltip(new Tooltip("Supprimer"));
-                btnSupprimer.setOnAction(e -> {
-                    Etudiant etudiant = getTableView().getItems().get(getIndex());
-                    handleSupprimer(etudiant);
-                });
-
-                actionBox.getChildren().addAll(btnModifier, btnSupprimer);
-                actionBox.setAlignment(Pos.CENTER);
-            }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setGraphic(null);
                 } else {
+                    Etudiant etudiant = (Etudiant) getTableRow().getItem();
+
+                    // 1. Création du Menu Contextuel
+                    ContextMenu contextMenu = new ContextMenu();
+
+                    // 1.1. Item Modifier
+                    MenuItem modifierItem = new MenuItem("Modifier");
+                    FontIcon editIcon = new FontIcon("fas-edit");
+                    editIcon.setIconSize(14);
+                    modifierItem.setGraphic(editIcon);
+                    modifierItem.setOnAction(e -> handleModifier(etudiant));
+
+                    // 1.2. Item Supprimer
+                    MenuItem supprimerItem = new MenuItem("Supprimer");
+                    FontIcon deleteIcon = new FontIcon("fas-trash");
+                    deleteIcon.setIconSize(14);
+                    deleteIcon.setIconColor(javafx.scene.paint.Color.web("#ef4444"));
+                    supprimerItem.setGraphic(deleteIcon);
+                    supprimerItem.setOnAction(e -> handleSupprimer(etudiant));
+
+                    contextMenu.getItems().addAll(modifierItem, supprimerItem);
+
+                    // 2. Création du Bouton "Trois Points"
+                    Button btnOptions = new Button();
+                    btnOptions.getStyleClass().addAll("btn-icon", "action-btn-options");
+                    btnOptions.setTooltip(new Tooltip("Actions"));
+                    FontIcon optionsIcon = new FontIcon("fas-ellipsis-v");
+                    optionsIcon.setIconSize(14);
+                    btnOptions.setGraphic(optionsIcon);
+
+                    // 3. Afficher le menu au clic du bouton
+                    btnOptions.setOnMouseClicked(event -> {
+                        contextMenu.show(btnOptions, event.getScreenX(), event.getScreenY());
+                    });
+
+                    // 4. Mettre en place le graphique
+                    HBox actionBox = new HBox(8);
+                    actionBox.getChildren().add(btnOptions);
+                    actionBox.setAlignment(Pos.CENTER);
+
+                    setAlignment(Pos.CENTER);
                     setGraphic(actionBox);
                 }
             }
         });
     }
 
+    /**
+     * Charge les étudiants de manière asynchrone avec un indicateur de chargement.
+     */
     private void loadEtudiants() {
-        try {
-            List<Etudiant> etudiants = etudiantDAO.findAll();
-            allEtudiants.setAll(etudiants);
-            filteredEtudiants.setAll(etudiants);
-            currentPage = 0; // Réinitialiser à la première page
-            updatePagination();
-        } catch (Exception e) {
+        Task<List<Etudiant>> loadTask = new Task<>() {
+            @Override
+            protected List<Etudiant> call() throws Exception {
+                // Thread.sleep(500); // Simuler la latence si nécessaire
+                return etudiantRepository.findAll();
+            }
+        };
+
+        loadTask.setOnFailed(e -> {
+            hideLoading();
             showError("Erreur de chargement", "Impossible de charger la liste des étudiants.");
-            e.printStackTrace();
+            loadTask.getException().printStackTrace();
+        });
+
+        loadTask.setOnSucceeded(e -> {
+            List<Etudiant> etudiants = loadTask.getValue();
+            allEtudiants.setAll(etudiants);
+
+            if (txtRecherche != null && !txtRecherche.getText().trim().isEmpty()) {
+                handleSearch();
+            } else {
+                filteredEtudiants.setAll(etudiants);
+            }
+
+            currentPage = 0;
+            updatePagination();
+            hideLoading();
+        });
+
+        showLoading();
+        new Thread(loadTask).start();
+    }
+
+    // Méthodes pour gérer l'overlay de chargement
+    private void showLoading() {
+        if (loadingOverlay != null && mainContent != null) {
+            loadingOverlay.setVisible(true);
+            loadingOverlay.setManaged(true);
+            mainContent.setDisable(true);
         }
     }
 
+    private void hideLoading() {
+        if (loadingOverlay != null && mainContent != null) {
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+            mainContent.setDisable(false);
+        }
+    }
+
+
     private void updatePagination() {
-        // Calculer le nombre total de pages
         totalPages = (int) Math.ceil((double) filteredEtudiants.size() / ITEMS_PER_PAGE);
 
         if (totalPages == 0) {
             totalPages = 1;
         }
 
-        // S'assurer que currentPage est dans les limites
         if (currentPage >= totalPages) {
             currentPage = totalPages - 1;
         }
@@ -156,11 +214,9 @@ public class EtudiantController {
             currentPage = 0;
         }
 
-        // Calculer les indices de début et fin
         int startIndex = currentPage * ITEMS_PER_PAGE;
         int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, filteredEtudiants.size());
 
-        // Extraire la sous-liste pour la page actuelle
         if (filteredEtudiants.size() > 0) {
             List<Etudiant> pageItems = filteredEtudiants.subList(startIndex, endIndex);
             etudiantsTable.setItems(FXCollections.observableArrayList(pageItems));
@@ -168,25 +224,40 @@ public class EtudiantController {
             etudiantsTable.setItems(FXCollections.observableArrayList());
         }
 
+        etudiantsTable.refresh();
+
+        if (btnPrevious != null && btnNext != null) {
+            btnPrevious.setDisable(currentPage == 0);
+            btnNext.setDisable(currentPage >= totalPages - 1 || filteredEtudiants.isEmpty());
+        }
+
         updateStatistics();
     }
 
     private void updateStatistics() {
         int total = filteredEtudiants.size();
-        lblTotal.setText("Total : " + total + " étudiant(s)");
+
+        if (lblTotalEtudiants != null) {
+            lblTotalEtudiants.setText("Total : " + total + " étudiant(s)");
+        }
 
         if (total > 0) {
             int startIndex = currentPage * ITEMS_PER_PAGE + 1;
             int endIndex = Math.min((currentPage + 1) * ITEMS_PER_PAGE, total);
-            lblPagination.setText(startIndex + "-" + endIndex + " sur " + total);
+
+            if (lblPaginationInfo != null) {
+                lblPaginationInfo.setText(startIndex + "-" + endIndex + " sur " + total);
+            }
         } else {
-            lblPagination.setText("0 sur 0");
+            if (lblPaginationInfo != null) {
+                lblPaginationInfo.setText("0 sur 0");
+            }
         }
     }
 
     @FXML
     private void handleSearch() {
-        String searchText = searchField.getText().toLowerCase().trim();
+        String searchText = txtRecherche.getText().toLowerCase().trim();
 
         if (searchText.isEmpty()) {
             filteredEtudiants.setAll(allEtudiants);
@@ -202,23 +273,21 @@ public class EtudiantController {
             filteredEtudiants.setAll(filtered);
         }
 
-        currentPage = 0; // Retour à la première page après recherche
+        currentPage = 0;
         updatePagination();
+
+        etudiantsTable.refresh();
     }
 
     @FXML
     private void handleAjouter() {
         try {
-            // Charger le FXML du dialog
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/bibliothecaire/gestionbibliotheque/view/etudiantDialogAjout.fxml")
             );
             VBox dialogContent = loader.load();
-
-            // Récupérer le contrôleur
             EtudiantDialogController dialogController = loader.getController();
 
-            // Créer et configurer le dialog
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Ajouter un étudiant");
             dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
@@ -231,19 +300,15 @@ public class EtudiantController {
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
 
-            // Afficher et attendre
             dialogStage.showAndWait();
 
-            // Traiter le résultat
             if (dialogController.isConfirmed()) {
                 Etudiant nouvelEtudiant = dialogController.getEtudiant();
-
-                // Enregistrer dans la base de données
-                boolean success = etudiantDAO.save(nouvelEtudiant);
+                boolean success = etudiantRepository.save(nouvelEtudiant);
 
                 if (success) {
                     showSuccess("Succès", "L'étudiant a été ajouté avec succès !");
-                    loadEtudiants(); // Recharger la liste
+                    loadEtudiants();
                 } else {
                     showError("Erreur", "Impossible d'ajouter l'étudiant. Vérifiez que le matricule n'existe pas déjà.");
                 }
@@ -256,7 +321,6 @@ public class EtudiantController {
 
     @FXML
     private void handleImport() {
-        // Sélectionner le fichier Excel
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
         fileChooser.setTitle("Importer des étudiants depuis Excel");
         fileChooser.getExtensionFilters().add(
@@ -266,71 +330,54 @@ public class EtudiantController {
         java.io.File fichier = fileChooser.showOpenDialog(etudiantsTable.getScene().getWindow());
 
         if (fichier == null) {
-            return; // L'utilisateur a annulé
+            return;
         }
 
-        // Afficher un indicateur de chargement
-        javafx.scene.control.Alert loadingAlert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION
-        );
-        loadingAlert.setTitle("Import en cours");
-        loadingAlert.setHeaderText("Veuillez patienter...");
-        loadingAlert.setContentText("Lecture du fichier Excel en cours...");
-        loadingAlert.show();
-
-        // Effectuer l'import dans un thread séparé pour ne pas bloquer l'UI
         javafx.concurrent.Task<Integer> importTask = new javafx.concurrent.Task<>() {
             @Override
             protected Integer call() throws Exception {
-                // Lire le fichier Excel
-                List<com.bibliothecaire.gestionbibliotheque.model.Etudiant> etudiants =
-                        com.bibliothecaire.gestionbibliotheque.model.ExcelImporter.importerEtudiants(fichier);
-
-                // Enregistrer dans la base de données
-                return etudiantDAO.saveAll(etudiants);
+                List<Etudiant> etudiants = ExcelImporter.importerEtudiants(fichier);
+                return etudiantRepository.saveAll(etudiants);
             }
         };
 
         importTask.setOnSucceeded(e -> {
-            loadingAlert.close();
             int count = importTask.getValue();
 
             if (count > 0) {
                 showSuccess("Import réussi", count + " étudiant(s) ont été importés avec succès !");
-                loadEtudiants(); // Recharger la liste
+                loadEtudiants();
             } else {
                 showError("Aucun import", "Aucun étudiant n'a pu être importé.\nVérifiez le format du fichier.");
             }
         });
 
         importTask.setOnFailed(e -> {
-            loadingAlert.close();
             Throwable exception = importTask.getException();
             showError("Erreur d'import",
                     "Impossible d'importer le fichier :\n" + exception.getMessage());
             exception.printStackTrace();
         });
 
-        // Lancer le thread
         new Thread(importTask).start();
     }
+
 
     @FXML
     private void handleRefresh() {
         loadEtudiants();
-        searchField.clear();
-        showSuccess("Actualisation", "Liste des étudiants actualisée.");
+        if (txtRecherche != null) {
+            txtRecherche.clear();
+        }
     }
 
     @FXML
     private void handleExport() {
-        // TODO: Exporter la liste des étudiants
         showInfo("Exporter", "Fonctionnalité en cours de développement.");
     }
 
     @FXML
     private void handlePrint() {
-        // TODO: Imprimer la liste
         showInfo("Imprimer", "Fonctionnalité en cours de développement.");
     }
 
@@ -352,17 +399,13 @@ public class EtudiantController {
 
     private void handleModifier(Etudiant etudiant) {
         try {
-            // Charger le FXML du dialog
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/bibliothecaire/gestionbibliotheque/view/etudiant-dialog.fxml")
+                    getClass().getResource("/com/bibliothecaire/gestionbibliotheque/view/etudiantDialogModifier.fxml")
             );
             VBox dialogContent = loader.load();
-
-            // Récupérer le contrôleur et pré-remplir avec les données existantes
             EtudiantDialogController dialogController = loader.getController();
             dialogController.setEtudiant(etudiant);
 
-            // Créer et configurer le dialog
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Modifier un étudiant");
             dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
@@ -375,23 +418,18 @@ public class EtudiantController {
             dialogStage.setScene(scene);
             dialogStage.setResizable(false);
 
-            // Afficher et attendre
             dialogStage.showAndWait();
 
-            // Traiter le résultat
             if (dialogController.isConfirmed()) {
                 Etudiant etudiantModifie = dialogController.getEtudiant();
+                boolean success = etudiantRepository.update(etudiantModifie);
 
-                // TODO: Ajouter une méthode update() dans EtudiantDAO
-                showInfo("Modification", "Modification de l'étudiant : " + etudiantModifie.getNomPrenoms() +
-                        "\n(Ajoutez une méthode update() dans EtudiantDAO pour sauvegarder)");
-
-                // Après avoir implémenté update() dans le DAO :
-                // boolean success = etudiantDAO.update(etudiantModifie);
-                // if (success) {
-                //     showSuccess("Succès", "L'étudiant a été modifié avec succès !");
-                //     loadEtudiants();
-                // }
+                if (success) {
+                    showSuccess("Succès", "L'étudiant a été modifié avec succès !");
+                    loadEtudiants();
+                } else {
+                    showError("Erreur", "Impossible de modifier l'étudiant.");
+                }
             }
         } catch (Exception e) {
             showError("Erreur", "Impossible d'ouvrir le formulaire de modification.");
@@ -403,12 +441,21 @@ public class EtudiantController {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Confirmation");
         confirmation.setHeaderText("Supprimer l'étudiant ?");
-        confirmation.setContentText("Êtes-vous sûr de vouloir supprimer " + etudiant.getNomPrenoms() + " ?");
+        confirmation.setContentText("Êtes-vous sûr de vouloir supprimer " + etudiant.getNomPrenoms() +
+                " (Matricule: " + etudiant.getMatriculeEtudiant() + ") ?\n\n" +
+                "Cette action est irréversible.");
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // TODO: Implémenter la suppression dans le DAO
-                showInfo("Suppression", "Suppression de l'étudiant : " + etudiant.getNomPrenoms() + "\n(Fonctionnalité à implémenter dans le DAO)");
+                boolean success = etudiantRepository.delete(etudiant.getMatriculeEtudiant());
+
+                if (success) {
+                    showSuccess("Succès", "L'étudiant a été supprimé avec succès !");
+                    loadEtudiants();
+                } else {
+                    showError("Erreur", "Impossible de supprimer l'étudiant.\n" +
+                            "Vérifiez qu'il n'est pas lié à des emprunts en cours.");
+                }
             }
         });
     }

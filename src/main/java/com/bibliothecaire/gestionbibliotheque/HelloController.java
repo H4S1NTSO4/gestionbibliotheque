@@ -298,7 +298,7 @@ public class HelloController {
     @FXML
     protected void showLivres() {
         setActiveMenu(btnLivres);
-        updateContentMessage("Livres", "Catalogue complet de la bibliothèque");
+        loadView("livre.fxml");
     }
 
     @FXML

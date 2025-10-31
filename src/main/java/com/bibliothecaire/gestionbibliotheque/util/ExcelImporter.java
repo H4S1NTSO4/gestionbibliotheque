@@ -1,5 +1,6 @@
-package com.bibliothecaire.gestionbibliotheque.model;
+package com.bibliothecaire.gestionbibliotheque.util;
 
+import com.bibliothecaire.gestionbibliotheque.model.Etudiant;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

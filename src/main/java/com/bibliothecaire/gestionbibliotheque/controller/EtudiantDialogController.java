@@ -2,6 +2,7 @@ package com.bibliothecaire.gestionbibliotheque.controller;
 
 import com.bibliothecaire.gestionbibliotheque.model.Etudiant;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -28,15 +29,23 @@ public class EtudiantDialogController {
     private Etudiant etudiant;
     private boolean confirmed = false;
 
+    // Constante pour la validation simple de l'email
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+
     @FXML
     public void initialize() {
-        // Configurer les boutons
+        // Configurer les actions des boutons
         btnAnnuler.setOnAction(e -> handleAnnuler());
         btnEnregistrer.setOnAction(e -> handleEnregistrer());
 
-        // Validation en temps réel (optionnel)
+        // Désactiver le bouton initialement (sera réactivé par validateForm)
+        btnEnregistrer.setDisable(true);
+
+        // Validation en temps réel : met à jour le style et l'état du bouton
         txtMatricule.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
         txtNomPrenoms.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
+        txtEmail.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
+        txtTelephone.textProperty().addListener((obs, oldVal, newVal) -> validateForm());
     }
 
     /**
@@ -46,15 +55,19 @@ public class EtudiantDialogController {
         this.etudiant = etudiant;
         if (etudiant != null) {
             txtMatricule.setText(etudiant.getMatriculeEtudiant());
-            txtMatricule.setDisable(true); // Le matricule ne peut pas être modifié
+            // Le matricule est désactivé et non modifiable en mode modification
+            txtMatricule.setDisable(true);
             txtNomPrenoms.setText(etudiant.getNomPrenoms());
-            txtEmail.setText(etudiant.getEmail());
-            txtTelephone.setText(etudiant.getTelephone());
+            // Gérer les valeurs nulles
+            txtEmail.setText(etudiant.getEmail() == null ? "" : etudiant.getEmail());
+            txtTelephone.setText(etudiant.getTelephone() == null ? "" : etudiant.getTelephone());
         }
+        // Valider le formulaire après le pré-remplissage
+        validateForm();
     }
 
     /**
-     * Retourne l'étudiant créé/modifié
+     * Retourne l'étudiant créé/modifié.
      */
     public Etudiant getEtudiant() {
         if (confirmed) {
@@ -63,7 +76,7 @@ public class EtudiantDialogController {
             String email = txtEmail.getText().trim();
             String telephone = txtTelephone.getText().trim();
 
-            // Gérer les champs vides pour email et téléphone (peuvent être null)
+            // Créer un nouvel objet Etudiant avec les données nettoyées
             return new Etudiant(
                     matricule,
                     nomPrenoms,
@@ -75,7 +88,7 @@ public class EtudiantDialogController {
     }
 
     /**
-     * Retourne true si l'utilisateur a confirmé
+     * Retourne true si l'utilisateur a confirmé.
      */
     public boolean isConfirmed() {
         return confirmed;
@@ -83,7 +96,7 @@ public class EtudiantDialogController {
 
     @FXML
     private void handleEnregistrer() {
-        // Validation
+        // Double vérification de la validation au moment de l'enregistrement
         if (!isFormValid()) {
             showValidationError();
             return;
@@ -99,23 +112,72 @@ public class EtudiantDialogController {
         closeDialog();
     }
 
-    private boolean isFormValid() {
-        return !txtMatricule.getText().trim().isEmpty() &&
-                !txtNomPrenoms.getText().trim().isEmpty();
+    /**
+     * Validation simple du format d'email (si fourni).
+     */
+    private boolean isEmailValid(String email) {
+        if (email.isEmpty()) {
+            return true; // L'email est optionnel
+        }
+        return email.matches(EMAIL_REGEX);
     }
 
+    /**
+     * Vérifie si tous les champs obligatoires sont remplis et les formats respectés.
+     */
+    private boolean isFormValid() {
+        boolean requiredFieldsValid = !txtMatricule.getText().trim().isEmpty() &&
+                !txtNomPrenoms.getText().trim().isEmpty();
+
+        boolean emailFormatValid = isEmailValid(txtEmail.getText().trim());
+
+        return requiredFieldsValid && emailFormatValid;
+    }
+
+    /**
+     * Applique ou retire la classe CSS d'erreur sur un champ.
+     */
+    private void applyErrorStyle(TextField field, boolean isValid) {
+        if (isValid) {
+            field.getStyleClass().remove("form-field-error");
+        } else {
+            if (!field.getStyleClass().contains("form-field-error")) {
+                field.getStyleClass().add("form-field-error");
+            }
+        }
+    }
+
+    /**
+     * Met à jour l'état visuel du formulaire et l'activation du bouton.
+     */
     private void validateForm() {
-        // Activer/désactiver le bouton Enregistrer selon la validation
+        boolean isMatriculeValid = !txtMatricule.getText().trim().isEmpty();
+        boolean isNomPrenomsValid = !txtNomPrenoms.getText().trim().isEmpty();
+        boolean isEmailFormatValid = isEmailValid(txtEmail.getText().trim());
+
+        // Appliquer les styles d'erreur immédiatement
+        applyErrorStyle(txtMatricule, isMatriculeValid);
+        applyErrorStyle(txtNomPrenoms, isNomPrenomsValid);
+        applyErrorStyle(txtEmail, isEmailFormatValid); // Feedback sur l'email même s'il est optionnel
+
+        // Activer/désactiver le bouton Enregistrer
         btnEnregistrer.setDisable(!isFormValid());
     }
 
+    /**
+     * Affiche un message d'erreur si la validation échoue.
+     */
     private void showValidationError() {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.WARNING
-        );
+        String errorMessage = "Veuillez remplir les champs obligatoires (*).";
+
+        if (!isEmailValid(txtEmail.getText().trim()) && !txtEmail.getText().trim().isEmpty()) {
+            errorMessage += "\n\nLe format de l'adresse Email est invalide.";
+        }
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Validation");
-        alert.setHeaderText("Champs obligatoires manquants");
-        alert.setContentText("Veuillez remplir le matricule et le nom/prénoms.");
+        alert.setHeaderText("Erreur de validation du formulaire");
+        alert.setContentText(errorMessage);
         alert.showAndWait();
     }
 

@@ -1,5 +1,6 @@
 /* ========== STYLES POUR LES DIALOGS ========== */
 
+/* ========== CHAMPS DE FORMULAIRE ========== */
 .form-field {
     -fx-background-color: #ffffff;
     -fx-border-color: #d1d5db;
@@ -8,6 +9,7 @@
     -fx-padding: 10 15;
     -fx-font-size: 14px;
     -fx-text-fill: #1f2937;
+    -fx-min-height: 40px; /* NOUVEAU : Uniformisation de la hauteur */
 }
 
 .form-field:focused {
@@ -24,6 +26,27 @@
 .form-field:empty {
     -fx-prompt-text-fill: #9ca3af;
 }
+
+/* Style pour les champs désactivés (en mode modification) */
+.form-field:disabled {
+    -fx-background-color: #f3f4f6;
+    -fx-opacity: 0.8;
+}
+
+/* NOUVEAU : FEEDBACK D'ERREUR DE FORMULAIRE */
+.form-field-error {
+    -fx-border-color: #ef4444; /* Rouge vif pour l'erreur */
+    -fx-border-width: 2;
+    -fx-effect: none; /* Désactiver l'ombre de focus standard */
+}
+
+/* Surcharge de l'effet de focus lorsque le champ est en erreur */
+.form-field-error:focused {
+    -fx-border-color: #dc2626; /* Rouge encore plus foncé au focus */
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.25), 8, 0, 0, 0); /* Ombre rouge */
+}
+
 
 /* ========== BOUTONS DU DIALOG ========== */
 .btn-primary {
@@ -68,6 +91,17 @@
     -fx-background-color: #f3f4f6;
 }
 
+/* Le bouton primaire est désactivé par défaut si le formulaire n'est pas valide */
+.btn-primary:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+.btn-primary:disabled:hover {
+    -fx-background-color: #6366f1; /* Conserver la couleur normale */
+}
+
+
 /* ========== LABELS ========== */
 .dialog-title {
     -fx-font-size: 20px;
@@ -81,7 +115,8 @@
     -fx-text-fill: #374151;
 }
 
-/* ========== DIALOG PANE ========== */
+/* ========== DIALOG PANE (conteneur JavaFX Alert) ========== */
+/* Ces styles assurent que si vous utilisez Alert, il est stylé */
 .dialog-pane {
     -fx-background-color: #ffffff;
     -fx-background-radius: 12;

@@ -8,4 +8,7 @@ public interface EtudiantRepository {
     boolean save(Etudiant etudiant);
     Etudiant findByMatricule(String matriculeEtudiant);
     List<Etudiant> findAll();
+    boolean update(Etudiant etudiant);
+    boolean delete(String matriculeEtudiant);
+    int saveAll(List<Etudiant> etudiants);
 }

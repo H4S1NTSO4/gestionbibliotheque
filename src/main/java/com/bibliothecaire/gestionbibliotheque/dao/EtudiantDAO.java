@@ -165,4 +165,37 @@ public class EtudiantDAO implements EtudiantRepository {
         }
         return etudiants;
     }
+
+    @Override
+    public boolean update(Etudiant etudiant) {
+        String sql = "UPDATE etudiant SET nom_prenoms = ?, email = ?, telephone = ? WHERE matricule_etudiant = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, etudiant.getNomPrenoms());
+            stmt.setString(2, etudiant.getEmail());
+            stmt.setString(3, etudiant.getTelephone());
+            stmt.setString(4, etudiant.getMatriculeEtudiant());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la mise à jour de l'étudiant " + etudiant.getMatriculeEtudiant());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(String matriculeEtudiant) {
+        String sql = "DELETE FROM etudiant WHERE matricule_etudiant = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, matriculeEtudiant);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la suppression de l'étudiant " + matriculeEtudiant);
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

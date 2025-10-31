@@ -17,7 +17,7 @@
                     <FontIcon fx:id="toggleIcon" iconLiteral="fas-bars" styleClass="header-icon"/>
                 </graphic>
             </Button>
-            <Label text="Biblio Management" styleClass="header-title"/>
+            <Label text="(Icone Bibliotheque)" styleClass="header-title"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
