@@ -1,65 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
       fx:controller="com.bibliothecaire.gestionbibliotheque.controller.EtudiantDialogController"
       spacing="20" style="-fx-padding: 25; -fx-background-color: #ffffff;">
 
-    <!-- Titre du dialog -->
-    <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 0 0 15 0; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
-        <FontIcon iconLiteral="fas-user-plus" iconSize="24" iconColor="#6366f1"/>
-        <Label text="Ajouter un étudiant" style="-fx-font-size: 20px; -fx-font-weight: 600; -fx-text-fill: #111827;"/>
-    </HBox>
+  <HBox spacing="15" alignment="CENTER_LEFT"
+        style="-fx-padding: 0 0 15 0; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+    <FontIcon iconLiteral="fas-user-plus" iconSize="24" iconColor="#6366f1"/>
+    <Label text="Ajouter un étudiant" style="-fx-font-size: 20px; -fx-font-weight: 600; -fx-text-fill: #111827;"/>
+  </HBox>
 
-    <!-- Formulaire -->
-    <GridPane hgap="15" vgap="15" style="-fx-padding: 10 0;">
-        <!-- Matricule -->
-        <Label text="Matricule *" GridPane.columnIndex="0" GridPane.rowIndex="0"
-               style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
-        <TextField fx:id="txtMatricule" promptText="Ex: E001" GridPane.columnIndex="1" GridPane.rowIndex="0"
-                   prefWidth="300" styleClass="form-field"/>
+  <GridPane hgap="15" vgap="15" style="-fx-padding: 10 0;">
 
-        <!-- Nom et Prénoms -->
-        <Label text="Nom et Prénoms *" GridPane.columnIndex="0" GridPane.rowIndex="1"
-               style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
-        <TextField fx:id="txtNomPrenoms" promptText="Ex: Dupont Jean" GridPane.columnIndex="1" GridPane.rowIndex="1"
-                   prefWidth="300" styleClass="form-field"/>
+    <Label text="Matricule *" GridPane.columnIndex="0" GridPane.rowIndex="0"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <TextField fx:id="txtMatricule" promptText="Ex: E001" GridPane.columnIndex="1" GridPane.rowIndex="0"
+               prefWidth="300" styleClass="form-field"/>
 
-        <!-- Email -->
-        <Label text="Email" GridPane.columnIndex="0" GridPane.rowIndex="2"
-               style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
-        <TextField fx:id="txtEmail" promptText="Ex: jean.dupont@univ.fr" GridPane.columnIndex="1" GridPane.rowIndex="2"
-                   prefWidth="300" styleClass="form-field"/>
+    <Label text="Nom et Prénoms *" GridPane.columnIndex="0" GridPane.rowIndex="1"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <TextField fx:id="txtNomPrenoms" promptText="Ex: Dupont Jean" GridPane.columnIndex="1" GridPane.rowIndex="1"
+               prefWidth="300" styleClass="form-field"/>
 
-        <!-- Téléphone -->
-        <Label text="Téléphone" GridPane.columnIndex="0" GridPane.rowIndex="3"
-               style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
-        <TextField fx:id="txtTelephone" promptText="Ex: 0610203040" GridPane.columnIndex="1" GridPane.rowIndex="3"
-                   prefWidth="300" styleClass="form-field"/>
+    <Label text="Email" GridPane.columnIndex="0" GridPane.rowIndex="2"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <TextField fx:id="txtEmail" promptText="Ex: jean.dupont@univ.fr" GridPane.columnIndex="1" GridPane.rowIndex="2"
+               prefWidth="300" styleClass="form-field"/>
 
-        <columnConstraints>
-            <ColumnConstraints minWidth="150" prefWidth="150"/>
-            <ColumnConstraints minWidth="300" prefWidth="300"/>
-        </columnConstraints>
-    </GridPane>
+    <Label text="Téléphone" GridPane.columnIndex="0" GridPane.rowIndex="3"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <TextField fx:id="txtTelephone" promptText="Ex: 0610203040" GridPane.columnIndex="1" GridPane.rowIndex="3"
+               prefWidth="300" styleClass="form-field"/>
 
-    <!-- Message d'information -->
-    <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-background-color: #EEF2FF; -fx-padding: 12; -fx-background-radius: 8;">
-        <FontIcon iconLiteral="fas-info-circle" iconSize="16" iconColor="#6366f1"/>
-        <Label text="Les champs marqués d'un * sont obligatoires"
-               style="-fx-font-size: 13px; -fx-text-fill: #4338ca;"/>
-    </HBox>
+    <Label text="Mention *" GridPane.columnIndex="0" GridPane.rowIndex="4"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <ComboBox fx:id="cbMention" promptText="Sélectionner la mention" GridPane.columnIndex="1" GridPane.rowIndex="4"
+              prefWidth="300" styleClass="form-field"/>
 
-    <!-- Boutons d'action -->
-    <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
-        <Button fx:id="btnAnnuler" text="Annuler" styleClass="btn-secondary" prefWidth="120"/>
-        <Button fx:id="btnEnregistrer" text="Enregistrer" styleClass="btn-primary" prefWidth="120"/>
-    </HBox>
+    <Label text="Parcours" GridPane.columnIndex="0" GridPane.rowIndex="5"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <ComboBox fx:id="cbParcours" promptText="Sélectionner le parcours (Optionnel)" GridPane.columnIndex="1"
+              GridPane.rowIndex="5"
+              prefWidth="300" styleClass="form-field" disable="true"/>
+
+    <Label text="Groupe" GridPane.columnIndex="0" GridPane.rowIndex="6"
+           style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #374151;"/>
+    <TextField fx:id="txtGroupe" promptText="Ex: G1 ou A" GridPane.columnIndex="1" GridPane.rowIndex="6"
+               prefWidth="300" styleClass="form-field"/>
+
+    <columnConstraints>
+      <ColumnConstraints minWidth="150" prefWidth="150"/>
+      <ColumnConstraints minWidth="300" prefWidth="300"/>
+    </columnConstraints>
+  </GridPane>
+
+  <HBox spacing="8" alignment="CENTER_LEFT"
+        style="-fx-background-color: #EEF2FF; -fx-padding: 12; -fx-background-radius: 8;">
+    <FontIcon iconLiteral="fas-info-circle" iconSize="16" iconColor="#6366f1"/>
+    <Label text="Les champs marqués d'un * sont obligatoires (Matricule, Nom/Prénoms, Mention)"
+           style="-fx-font-size: 13px; -fx-text-fill: #4338ca;"/>
+  </HBox>
+
+  <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
+    <Button fx:id="btnAnnuler" text="Annuler" styleClass="btn-secondary" prefWidth="120"/>
+    <Button fx:id="btnEnregistrer" text="Enregistrer" styleClass="btn-primary" prefWidth="120"/>
+  </HBox>
 
 </VBox>

@@ -2,104 +2,109 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
-
-<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<?import org.kordamp.ikonli.javafx.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane" xmlns="http://javafx.com/javafx/21"
             fx:controller="com.bibliothecaire.gestionbibliotheque.HelloController"
             stylesheets="@../style/style.css"
             prefHeight="800.0" prefWidth="1400.0">
 
-    <!-- En-tête -->
-    <top>
-        <HBox styleClass="header-container" alignment="CENTER_LEFT" spacing="20">
-            <Button fx:id="toggleMenuBtn" onAction="#toggleMenu" styleClass="toggle-menu-btn" text="">
-                <graphic>
-                    <FontIcon fx:id="toggleIcon" iconLiteral="fas-bars" styleClass="header-icon"/>
-                </graphic>
-            </Button>
-            <Label text="(Icone Bibliotheque)" styleClass="header-title"/>
+  <!-- En-tête -->
+  <top>
+    <HBox styleClass="header-container" alignment="CENTER_LEFT" spacing="20">
+      <Button fx:id="toggleMenuBtn" onAction="#toggleMenu" styleClass="toggle-menu-btn" text="">
+        <graphic>
+          <FontIcon fx:id="toggleIcon" iconLiteral="fas-bars" styleClass="header-icon"/>
+        </graphic>
+      </Button>
+      <Label text="(Icone Bibliotheque)" styleClass="header-title"/>
 
-            <Region HBox.hgrow="ALWAYS"/>
+      <Region HBox.hgrow="ALWAYS"/>
 
-            <!-- Actions header -->
-            <HBox spacing="15" alignment="CENTER_RIGHT">
-                <Button styleClass="header-action-btn" text="">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-bell" styleClass="header-icon"/>
-                    </graphic>
-                </Button>
-                <Button styleClass="header-action-btn" text="">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-cog" styleClass="header-icon"/>
-                    </graphic>
-                </Button>
-                <Button styleClass="header-action-btn" text="">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-user-circle" styleClass="header-icon"/>
-                    </graphic>
-                </Button>
-            </HBox>
-        </HBox>
-    </top>
+      <!-- Actions header -->
+      <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button styleClass="header-action-btn" text="">
+          <graphic>
+            <FontIcon iconLiteral="fas-bell" styleClass="header-icon"/>
+          </graphic>
+        </Button>
+        <Button styleClass="header-action-btn" text="">
+          <graphic>
+            <FontIcon iconLiteral="fas-cog" styleClass="header-icon"/>
+          </graphic>
+        </Button>
+        <Button styleClass="header-action-btn" text="">
+          <graphic>
+            <FontIcon iconLiteral="fas-user-circle" styleClass="header-icon"/>
+          </graphic>
+        </Button>
+      </HBox>
+    </HBox>
+  </top>
 
-    <!-- Menu latéral + Contenu -->
-    <center>
-        <HBox>
-            <!-- Menu latéral -->
-            <VBox fx:id="sideMenu" styleClass="side-menu" prefWidth="240" minWidth="240" maxWidth="240">
-                <VBox fx:id="menuContainer" spacing="2" style="-fx-padding: 20 10;">
-                    <!-- Dashboard -->
-                    <Button fx:id="btnDashboard" onAction="#showDashboard" styleClass="menu-item" maxWidth="Infinity"/>
+  <!-- Menu latéral + Contenu -->
+  <center>
+    <HBox>
+      <!-- Menu latéral -->
+      <VBox fx:id="sideMenu" styleClass="side-menu" prefWidth="240" minWidth="240" maxWidth="240">
+        <VBox fx:id="menuContainer" spacing="2" style="-fx-padding: 20 10;">
+          <!-- Dashboard -->
+          <Button fx:id="btnDashboard" onAction="#showDashboard" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Visiteurs avec sous-menu -->
-                    <Button fx:id="btnVisiteurs" onAction="#toggleVisiteursSubmenu" styleClass="menu-item" maxWidth="Infinity"/>
-                    <VBox fx:id="visiteursSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
-                        <Button fx:id="btnVisiteEnCours" onAction="#showVisiteEnCours" styleClass="menu-item-sub" maxWidth="Infinity"/>
-                        <Button fx:id="btnHistoriqueVisite" onAction="#showHistoriqueVisite" styleClass="menu-item-sub" maxWidth="Infinity"/>
-                    </VBox>
+          <!-- Visiteurs avec sous-menu -->
+          <Button fx:id="btnVisiteurs" onAction="#toggleVisiteursSubmenu" styleClass="menu-item" maxWidth="Infinity"/>
+          <VBox fx:id="visiteursSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
+            <Button fx:id="btnVisiteEnCours" onAction="#showVisiteEnCours" styleClass="menu-item-sub"
+                    maxWidth="Infinity"/>
+            <Button fx:id="btnHistoriqueVisite" onAction="#showHistoriqueVisite" styleClass="menu-item-sub"
+                    maxWidth="Infinity"/>
+          </VBox>
 
-                    <!-- Membres -->
-                    <Button fx:id="btnMembres" onAction="#showMembres" styleClass="menu-item" maxWidth="Infinity"/>
+          <!-- Membres -->
+          <Button fx:id="btnMembres" onAction="#showMembres" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Livres -->
-                    <Button fx:id="btnLivres" onAction="#showLivres" styleClass="menu-item" maxWidth="Infinity"/>
+          <!-- Livres -->
+          <Button fx:id="btnLivres" onAction="#showLivres" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Consultation Livre avec sous-menu -->
-                    <Button fx:id="btnConsultationLivre" onAction="#toggleConsultationSubmenu" styleClass="menu-item" maxWidth="Infinity"/>
-                    <VBox fx:id="consultationSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
-                        <Button fx:id="btnConsultationEnCours" onAction="#showConsultationEnCours" styleClass="menu-item-sub" maxWidth="Infinity"/>
-                        <Button fx:id="btnHistoriqueConsultation" onAction="#showHistoriqueConsultation" styleClass="menu-item-sub" maxWidth="Infinity"/>
-                    </VBox>
+          <!-- Consultation Livre avec sous-menu -->
+          <Button fx:id="btnConsultationLivre" onAction="#toggleConsultationSubmenu" styleClass="menu-item"
+                  maxWidth="Infinity"/>
+          <VBox fx:id="consultationSubmenu" spacing="2" visible="false" managed="false" style="-fx-padding: 0 0 0 20;">
+            <Button fx:id="btnConsultationEnCours" onAction="#showConsultationEnCours" styleClass="menu-item-sub"
+                    maxWidth="Infinity"/>
+            <Button fx:id="btnHistoriqueConsultation" onAction="#showHistoriqueConsultation" styleClass="menu-item-sub"
+                    maxWidth="Infinity"/>
+          </VBox>
 
-                    <!-- Mémoire -->
-                    <Button fx:id="btnMemoire" onAction="#showMemoire" styleClass="menu-item" maxWidth="Infinity"/>
+          <!-- Mémoire -->
+          <Button fx:id="btnMemoire" onAction="#showMemoire" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Rapports -->
-                    <Button fx:id="btnRapports" onAction="#showRapports" styleClass="menu-item" maxWidth="Infinity"/>
+          <!-- Rapports -->
+          <Button fx:id="btnRapports" onAction="#showRapports" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <Region VBox.vgrow="ALWAYS"/>
+          <Region VBox.vgrow="ALWAYS"/>
 
-                    <!-- Paramètres -->
-                    <Button fx:id="btnParametres" onAction="#showParametres" styleClass="menu-item" maxWidth="Infinity"/>
+          <!-- Paramètres -->
+          <Button fx:id="btnParametres" onAction="#showParametres" styleClass="menu-item" maxWidth="Infinity"/>
 
-                    <!-- Déconnexion -->
-                    <Button fx:id="btnDeconnexion" onAction="#deconnexion" styleClass="menu-item-danger" maxWidth="Infinity"/>
-                </VBox>
-            </VBox>
+          <!-- Déconnexion -->
+          <Button fx:id="btnDeconnexion" onAction="#deconnexion" styleClass="menu-item-danger" maxWidth="Infinity"/>
+        </VBox>
+      </VBox>
 
-            <!-- Contenu principal -->
-            <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS" styleClass="content-area">
-                <!-- Vue de bienvenue par défaut -->
-                <VBox spacing="30" alignment="CENTER" style="-fx-padding: 60;">
-                    <FontIcon iconLiteral="fas-book-reader" iconSize="80" iconColor="#6366f1"/>
-                    <VBox alignment="CENTER" spacing="10">
-                        <Label text="Bienvenue dans Biblio Management"
-                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                        <Label text="Sélectionnez une option dans le menu pour commencer" style="-fx-font-size: 16px; -fx-text-fill: #6b7280;"/>
-                    </VBox>
-                </VBox>
-            </StackPane>
-        </HBox>
-    </center>
+      <!-- Contenu principal -->
+      <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS" styleClass="content-area">
+        <!-- Vue de bienvenue par défaut -->
+        <VBox spacing="30" alignment="CENTER" style="-fx-padding: 60;">
+          <FontIcon iconLiteral="fas-book-reader" iconSize="80" iconColor="#6366f1"/>
+          <VBox alignment="CENTER" spacing="10">
+            <Label text="Bienvenue dans Biblio Management"
+                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+            <Label text="Sélectionnez une option dans le menu pour commencer"
+                   style="-fx-font-size: 16px; -fx-text-fill: #6b7280;"/>
+          </VBox>
+        </VBox>
+      </StackPane>
+    </HBox>
+  </center>
 
 </BorderPane>

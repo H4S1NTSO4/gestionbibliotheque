@@ -9,20 +9,20 @@ import org.kordamp.bootstrapfx.BootstrapFX;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("view/main-layout.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+  public static void main(String[] args) {
+    launch();
+  }
 
-        // Ajouter BootstrapFX à la scène
-        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+  @Override
+  public void start(Stage stage) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("view/main-layout.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 
-        stage.setTitle("Bibliothèque");
-        stage.setScene(scene);
-        stage.show();
-    }
+    // Ajouter BootstrapFX à la scène
+    scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 
-    public static void main(String[] args) {
-        launch();
-    }
+    stage.setTitle("Bibliothèque");
+    stage.setScene(scene);
+    stage.show();
+  }
 }

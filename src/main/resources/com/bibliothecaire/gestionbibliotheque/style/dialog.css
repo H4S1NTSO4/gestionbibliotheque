@@ -15,7 +15,7 @@
 .form-field:focused {
     -fx-border-color: #6366f1;
     -fx-border-width: 2;
-    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.25), 8, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.25), 8, 0, 0, 0);
 }
 
 .form-field:hover {
@@ -62,7 +62,7 @@
 
 .btn-primary:hover {
     -fx-background-color: #4f46e5;
-    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.4), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 10, 0, 0, 4);
 }
 
 .btn-primary:pressed {
@@ -97,6 +97,7 @@
     -fx-cursor: default;
     -fx-effect: none;
 }
+
 .btn-primary:disabled:hover {
     -fx-background-color: #6366f1; /* Conserver la couleur normale */
 }
